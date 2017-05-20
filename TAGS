@@ -1,0 +1,80 @@
+
+./app/Main.hs,52
+module Main Main0,1
+main main4,5
+main main5,6
+
+./src/Reader.hs,205
+module Reader Reader0,1
+findTranscriptions findTranscriptions9,10
+findTranscriptions findTranscriptions10,11
+takeTranscriptions takeTranscriptions12,13
+takeTranscriptions takeTranscriptions13,14
+
+./src/Types.hs,1077
+module Types Types1,2
+data Transcript Transcript8,9
+data Transcript = TranscriptTranscript8,9
+  { content content9,10
+  , filepath filepath10,11
+data Fragment Fragment14,15
+data Fragment = FragmentFragment14,15
+  { code code15,16
+  , text text16,17
+  , location location17,18
+data Location Location21,22
+data Location = LocationLocation21,22
+  { fileName fileName22,23
+  , lineNumber lineNumber23,24
+isSingleLine isSingleLine26,27
+isSingleLine isSingleLine27,28
+newtype CodedText CodedText30,31
+newtype CodedText = CodedTextCodedText30,31
+  { unCodedText unCodedText31,32
+instance instance34,35
+addFragment addFragment40,41
+addFragment addFragment41,42
+addFragments addFragments45,46
+addFragments addFragments46,47
+makeCodedText makeCodedText49,50
+makeCodedText makeCodedText50,51
+ppCodedText ppCodedText52,53
+ppCodedText ppCodedText53,54
+ppFragment ppFragment65,66
+ppFragment ppFragment66,67
+ppLocation ppLocation73,74
+ppLocation ppLocation74,75
+ppLineNumber ppLineNumber81,82
+ppLineNumber ppLineNumber82,83
+
+./src/Lib.hs,77
+module LibLib1,2
+writeCodes writeCodes13,14
+writeCodes writeCodes14,15
+
+./src/Parser.hs,601
+module Parser Parser1,2
+newLocation newLocation15,16
+newLocation newLocation16,17
+fragmentStart fragmentStart18,19
+codeDelim codeDelim20,21
+fragmentEnd fragmentEnd22,23
+parseTranscript parseTranscript24,25
+parseTranscript parseTranscript25,26
+incrLineNumber incrLineNumber28,29
+incrLineNumber incrLineNumber29,30
+codeText codeText33,34
+codeText codeText34,35
+codedSection codedSection41,42
+codedSection codedSection42,43
+anyCharIncrNewline anyCharIncrNewline54,55
+anyCharIncrNewline anyCharIncrNewline55,56
+incrNewline incrNewline57,58
+incrNewline incrNewline58,59
+
+./test/Spec.hs,30
+main main0,1
+main main1,2
+
+./Setup.hs,15
+main main1,2
