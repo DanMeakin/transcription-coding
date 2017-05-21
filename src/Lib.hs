@@ -18,8 +18,7 @@ writeCodes transcriptsPath outputPath = do
     Right cts -> do
       let output =
             T.unlines
-              [ "# Transcripts Coding\n"
-              , "Source files:\n"
+              [ "Source files:\n"
               , T.unlines $ fmap (T.append "  * " . T.pack) filenames
               , ppCodedText . mconcat $ cts
               ]

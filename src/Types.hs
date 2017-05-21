@@ -14,8 +14,10 @@ data Transcript = Transcript
   } deriving (Show, Eq)
 
 -- | Represents a fragment of text from a transcription.
+--
+-- A fragment may have multiple codes, hence the list of text.
 data Fragment = Fragment
-  { code     :: Text
+  { code     :: [Text]
   , text     :: Text
   , location :: Location
   } deriving (Show, Eq)
@@ -40,9 +42,14 @@ instance Monoid CodedText where
     CodedText $ Map.unionWith (++) ct1 ct2
 
 -- | Add a fragment into a CodedText value.
+--
+-- A fragment may contain multiple codes. Multiple insertions may therefore
+-- take place from one Fragment value.
 addFragment :: CodedText -> Fragment -> CodedText
-addFragment CodedText {unCodedText = map} fragment =
-  CodedText $ Map.insertWith (++) (code fragment) [fragment] map
+addFragment codedText fragment =
+  foldl inserter codedText . code $ fragment
+    where inserter CodedText { unCodedText = currMap } codeName =
+            CodedText $ Map.insertWith (++) codeName [fragment] currMap
 
 -- | Add multiple fragments into a CodedText value.
 addFragments :: CodedText -> [Fragment] -> CodedText
@@ -54,10 +61,10 @@ makeCodedText = addFragments $ CodedText Map.empty
 
 ppCodedText :: CodedText -> Text
 ppCodedText CodedText { unCodedText = codedText } =
-  Map.foldWithKey printEntry "" codedText
+  foldr (uncurry printEntry) "" . sortBy (compare `on` fst) . Map.toList $ codedText
   where
     printEntry k v a =
-      T.concat [ "## "
+      T.concat [ "# "
                , k
                , "\n\n"
                , T.concat . fmap ppFragment . sortBy (compare `on` location) $ v
@@ -75,7 +82,7 @@ ppFragment fragment = T.concat
 
 ppLocation :: Location -> Text
 ppLocation location = T.concat
-  [ "  * File: "
+  [ "## File: "
   , fileName location
   , " "
   , ppLineNumber . lineNumber $ location

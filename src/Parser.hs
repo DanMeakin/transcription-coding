@@ -35,7 +35,6 @@ codeText :: Parsec Text Location CodedText
 codeText = makeCodedText <$> (nonCodedSection *> endBy codedSection nonCodedSection)
   where
     nonCodedSection = many (incrNewline <|> satisfy (/= fragmentStart)) *> pure () <|> eof
-    grouped = groupBy ((==) `on` code) . sortBy (compare `on` T.toLower . code)
     listHead []    = []
     listHead (x:_) = x
 
@@ -43,14 +42,25 @@ codedSection :: Parsec Text Location Fragment
 codedSection = do
   manyTill anyCharIncrNewline $ char fragmentStart
   startState <- getState
-  thisCode <- manyTill anyCharIncrNewline $ char codeDelim
-  thisText <- manyTill anyCharIncrNewline $ char fragmentEnd
+  thisCode <- manyTill parseCode (char codeDelim)
+  thisText <- parseText
   endState <- getState
-  let location = startState { lineNumber = ( fst . lineNumber $ startState
-                                           , fst . lineNumber $ endState
-                                           )
-                            }
-  return Fragment {code = T.pack thisCode, text = T.pack thisText, location = location }
+  let location =
+        startState
+        { lineNumber =
+            (fst . lineNumber $ startState, fst . lineNumber $ endState)
+        }
+  return Fragment {code = thisCode, text = thisText, location = location}
+  where
+    parseCode :: Parsec Text Location Text
+    parseCode =
+      T.toTitle . T.strip . T.pack <$> (notCommaIncrNewline <* optional (char ','))
+    parseText :: Parsec Text Location Text
+    parseText =
+      T.strip . T.pack <$> manyTill anyCharIncrNewline (char fragmentEnd)
+
+notCommaIncrNewline :: Parsec Text Location String
+notCommaIncrNewline = many1 (incrNewline <|> satisfy ((&&) <$> (/= ',') <*> (/= codeDelim)))
 
 anyCharIncrNewline :: Parsec Text Location Char
 anyCharIncrNewline = incrNewline <|> anyChar
